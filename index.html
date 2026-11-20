@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkyCast AI | Smart Weather Assistant</title>
+<style>
+:root{--bg:#081321;--panel:#101f32;--panel2:#142840;--line:rgba(166,199,231,.13);--text:#edf6ff;--muted:#91a9c2;--blue:#57b8ff;--cyan:#65e0df;--yellow:#ffd36b;--red:#ff8b83;--green:#7be0b0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0%,#173b5c 0,transparent 30%),var(--bg);color:var(--text);font-family:Inter,"Noto Sans Thai",Tahoma,sans-serif;min-height:100vh}
+.wrap{max-width:1180px;margin:auto;padding:28px 22px 50px}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,#4ebcff,#4de0d0);display:grid;place-items:center;font-size:25px;box-shadow:0 8px 28px #43b7ee33}.brand h1{font-size:22px;margin:0;letter-spacing:.3px}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}.topright{display:flex;align-items:center;gap:10px}.status{color:var(--green);font-size:12px;display:flex;align-items:center;gap:7px}.dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 10px var(--green)}
+.searchbar{display:flex;gap:10px;margin-bottom:18px}.searchbar input{flex:1;min-width:0;border:1px solid var(--line);background:#10243a;color:var(--text);border-radius:12px;padding:13px 15px;font-size:14px}.searchbar input::placeholder{color:#7892ad}.btn{border:0;background:linear-gradient(120deg,#54baff,#55d7d0);color:#082036;padding:10px 17px;border-radius:12px;font-weight:700;cursor:pointer}.btn:disabled{opacity:.6;cursor:wait}.message{font-size:12px;color:var(--muted);min-height:18px;margin:-8px 2px 12px}.hero{display:grid;grid-template-columns:1.35fr .85fr;gap:18px;margin-bottom:18px}.card{background:linear-gradient(145deg,rgba(20,40,64,.96),rgba(13,29,47,.96));border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 14px 40px #0002}.weather-main{position:relative;overflow:hidden;min-height:260px}.weather-main:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:#54bfff12;right:-45px;top:-85px;pointer-events:none}.eyebrow{font-size:12px;color:var(--muted);letter-spacing:.4px}.place{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:8px}.temp-row{display:flex;align-items:center;gap:20px;margin-top:22px}.temp{font-size:68px;font-weight:650;letter-spacing:-4px;line-height:1}.weather-icon{font-size:58px;filter:drop-shadow(0 8px 15px #0004)}.condition{font-size:17px;margin-top:8px}.subcondition{color:var(--muted);font-size:12px;margin-top:5px}.updated{position:absolute;bottom:20px;left:22px;color:var(--muted);font-size:11px}.quick-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stat{background:#0d1d30;border:1px solid var(--line);border-radius:17px;padding:17px}.stat-head{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.stat-icon{font-size:18px}.stat-value{font-size:28px;font-weight:650;margin:13px 0 4px}.stat-note{font-size:11px;color:var(--muted)}.uv{color:var(--yellow)}.rain{color:var(--blue)}.humidity{color:var(--cyan)}.wind{color:var(--green)}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:25px 2px 13px}.section-title h2{font-size:16px;margin:0}.section-title span{font-size:11px;color:var(--muted)}.lower{display:grid;grid-template-columns:1fr 1fr;gap:18px}.air-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.air-item{background:#0d1d30;border:1px solid var(--line);border-radius:14px;padding:14px}.air-item small{color:var(--muted);font-size:11px}.air-item strong{display:block;font-size:23px;margin-top:7px}.air-level{font-size:12px;color:var(--green);margin-top:4px}.alert-list{display:grid;gap:10px}.alert{display:flex;gap:12px;align-items:flex-start;background:#0d1d30;border:1px solid var(--line);border-radius:14px;padding:13px}.alert-ico{font-size:20px}.alert strong{font-size:12px;display:block;margin-bottom:4px}.alert small{font-size:11px;color:var(--muted);line-height:1.5}.empty{color:var(--muted);font-size:12px;line-height:1.7}.footer{display:flex;justify-content:space-between;gap:12px;color:#718ba5;font-size:10px;margin-top:25px;flex-wrap:wrap}button:focus,input:focus{outline:2px solid var(--blue);outline-offset:2px}
+@media(max-width:760px){.wrap{padding:18px 14px 35px}.top{align-items:flex-start;flex-direction:column}.topright{align-items:flex-start}.hero,.lower{grid-template-columns:1fr}.weather-main{min-height:245px}.temp{font-size:60px}.quick-stats{grid-template-columns:1fr 1fr}.card{padding:18px}.brand h1{font-size:19px}.searchbar{flex-wrap:wrap}.searchbar .btn{flex:0 0 auto}}
+@media(max-width:390px){.quick-stats,.air-grid{grid-template-columns:1fr 1fr}.stat{padding:13px}.stat-value{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">⛅</div><div><h1>SkyCast <span style="color:#65d9e4">AI</span></h1><p>SMART WEATHER ASSISTANT</p></div></div>
+    <div class="topright"><div class="status"><span class="dot"></span><span id="connectionStatus">รอการเชื่อมต่อ</span></div></div>
+  </header>
+
+  <form class="searchbar" id="searchForm">
+    <input id="searchInput" type="search" placeholder="ค้นหาเมือง / จังหวัด / ประเทศ เช่น Trang, Thailand" autocomplete="off" required>
+    <button class="btn" id="searchButton" type="submit">ค้นหาพื้นที่</button>
+  </form>
+  <div class="message" id="message">พิมพ์ชื่อพื้นที่เพื่อดูสภาพอากาศจริง</div>
+
+  <section class="hero">
+    <div class="card weather-main">
+      <div class="eyebrow" id="dateText">สภาพอากาศปัจจุบัน</div>
+      <div class="place">📍 <strong id="place">ยังไม่ได้เลือกพื้นที่</strong></div>
+      <div class="temp-row"><div class="weather-icon" id="weatherIcon">🌤️</div><div><div class="temp" id="temp">--°</div><div class="condition" id="condition">รอข้อมูลสภาพอากาศ</div><div class="subcondition">รู้สึกเหมือน <span id="feels">--</span>°C</div></div></div>
+      <div class="updated" id="updated">อัปเดตล่าสุด: --</div>
+    </div>
+    <div class="quick-stats">
+      <div class="stat"><div class="stat-head"><span>ปริมาณฝน</span><span class="stat-icon">🌧️</span></div><div class="stat-value rain" id="rain">--%</div><div class="stat-note">ปริมาณฝนใน 1 ชั่วโมงล่าสุด</div></div>
+      <div class="stat"><div class="stat-head"><span>ดัชนีรังสี UV</span><span class="stat-icon">☀️</span></div><div class="stat-value uv" id="uv">--</div><div class="stat-note" id="uvLevel">รอข้อมูล UV</div></div>
+      <div class="stat"><div class="stat-head"><span>ความชื้น</span><span class="stat-icon">💧</span></div><div class="stat-value humidity" id="humidity">--%</div><div class="stat-note">ความชื้นสัมพัทธ์</div></div>
+      <div class="stat"><div class="stat-head"><span>ความเร็วลม</span><span class="stat-icon">💨</span></div><div class="stat-value wind" id="wind">--</div><div class="stat-note">กิโลเมตร/ชั่วโมง</div></div>
+    </div>
+  </section>
+
+  <div class="section-title"><h2>คุณภาพอากาศ</h2><span>OpenWeather Air Pollution API</span></div>
+  <section class="card">
+    <div class="air-grid">
+      <div class="air-item"><small>ดัชนีคุณภาพอากาศ (AQI)</small><strong id="aqi">--</strong><div class="air-level" id="aqiLevel">รอข้อมูล</div></div>
+      <div class="air-item"><small>PM2.5</small><strong id="pm25">-- µg/m³</strong><div class="air-level">ฝุ่นละอองขนาดเล็ก</div></div>
+      <div class="air-item"><small>PM10</small><strong id="pm10">-- µg/m³</strong><div class="air-level">ฝุ่นละอองขนาดไม่เกิน 10 ไมครอน</div></div>
+      <div class="air-item"><small>โอโซน (O₃)</small><strong id="ozone">-- µg/m³</strong><div class="air-level">ข้อมูลมลพิษทางอากาศ</div></div>
+    </div>
+  </section>
+
+  <div class="section-title"><h2>การแจ้งเตือนที่ควรทราบ</h2><span>Weather Alerts</span></div>
+  <section class="alert-list" id="alerts"><div class="alert"><div class="alert-ico">ℹ️</div><div><strong>ยังไม่มีข้อมูลแจ้งเตือน</strong><small>ค้นหาพื้นที่เพื่อโหลดข้อมูลการแจ้งเตือน (ต้องเปิดใช้ One Call API 3.0)</small></div></div></section>
+
+  <footer class="footer"><span>© 2026 SkyCast AI · Smart Weather Assistant</span><span>Weather data: OpenWeather · แสดงตามข้อมูล API ที่ได้รับ</span></footer>
+</div>
+<script>
+/* ใส่ URL ของ Cloudflare Worker หลัง Deploy เช่น https://skycast-api.username.workers.dev */
+const API_BASE = "https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev";
+const $ = id => document.getElementById(id);
+const setMessage = (text, error=false) => { $("message").textContent=text; $("message").style.color=error?"#ff8b83":"#91a9c2"; };
+const num = (v, digits=0) => Number.isFinite(Number(v)) ? Number(v).toFixed(digits) : "--";
+const uvLabel = v => v>=11?"สูงมาก":v>=8?"สูง":v>=6?"สูงปานกลาง":v>=3?"ปานกลาง":"ต่ำ";
+const aqiLabel = v => ({1:"ดี",2:"พอใช้",3:"ปานกลาง",4:"ไม่ดี",5:"แย่มาก"})[v] || "ไม่ทราบ";
+const weatherEmoji = main => ({Thunderstorm:"⛈️",Drizzle:"🌦️",Rain:"🌧️",Snow:"❄️",Clear:"☀️",Clouds:"☁️",Mist:"🌫️",Smoke:"🌫️",Haze:"🌫️",Dust:"🌫️",Fog:"🌫️",Sand:"🌫️",Ash:"🌫️",Squall:"💨",Tornado:"🌪️"})[main] || "🌤️";
+const dateTH = ts => new Date(ts*1000).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"});
+function ensureConfig(){
+  if(API_BASE.includes("YOUR-WORKER-NAME")) throw new Error("ยังไม่ได้ตั้งค่า API_BASE กรุณาใส่ URL ของ Cloudflare Worker ในไฟล์ index.html");
+}
+async function api(path){
+  ensureConfig();
+  const r=await fetch(API_BASE.replace(/\/$/,"")+path);
+  const body=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(body.error || `API error (${r.status})`);
+  return body;
+}
+function renderWeather(d){
+  const w=d.weather?.[0]||{};
+  $("place").textContent=[d.name,d.state,d.country].filter(Boolean).join(", ");
+  $("temp").textContent=num(d.main?.temp)+"°";
+  $("feels").textContent=num(d.main?.feels_like);
+  $("condition").textContent=w.description||"ไม่มีคำอธิบาย";
+  $("weatherIcon").textContent=weatherEmoji(w.main);
+  $("humidity").textContent=num(d.main?.humidity)+"%";
+  $("wind").textContent=num((d.wind?.speed||0)*3.6)+"";
+  $("rain").textContent=d.rain?.["1h"]!=null?`${num(d.rain["1h"],1)} mm/h`:"ไม่มีฝนในข้อมูลชั่วโมงล่าสุด";
+  $("updated").textContent="อัปเดตล่าสุด: "+dateTH(d.dt);
+  $("dateText").textContent="สภาพอากาศปัจจุบัน";
+}
+function renderAir(a){
+  if(!a?.list?.length){$("aqi").textContent="--";$("aqiLevel").textContent="ไม่มีข้อมูล";return;}
+  const x=a.list[0], c=x.components||{}, q=x.main?.aqi;
+  $("aqi").textContent=q??"--";$("aqiLevel").textContent=aqiLabel(q);
+  $("pm25").textContent=num(c.pm2_5,1)+" µg/m³";
+  $("pm10").textContent=num(c.pm10,1)+" µg/m³";
+  $("ozone").textContent=num(c.o3,1)+" µg/m³";
+}
+function renderOneCall(o, errorMessage){
+  if(!o){
+    $("uv").textContent="--";
+    $("uvLevel").textContent="ยังไม่ได้เปิดใช้ One Call API 3.0";
+    $("alerts").innerHTML="";
+    const el=document.createElement("div");el.className="alert";
+    const ico=document.createElement("div");ico.className="alert-ico";ico.textContent="ℹ️";
+    const body=document.createElement("div");
+    const title=document.createElement("strong");title.textContent="ข้อมูล UV และประกาศเตือนยังไม่พร้อมใช้งาน";
+    const detail=document.createElement("small");detail.textContent=errorMessage||"ต้องเปิดใช้ One Call API 3.0 ในบัญชี OpenWeather";
+    body.append(title,detail);el.append(ico,body);$("alerts").append(el);return;
+  }
+  const u=o.current?.uvi;
+  $("uv").textContent=u==null?"ไม่มีข้อมูล":num(u,1);
+  $("uvLevel").textContent=u==null?"ต้องเปิดใช้ One Call API 3.0":"ระดับ"+uvLabel(u);
+  const alerts=o.alerts||[];
+  $("alerts").innerHTML="";
+  if(!alerts.length){
+    $("alerts").innerHTML='<div class="alert"><div class="alert-ico">✓</div><div><strong>ไม่พบประกาศเตือนจากหน่วยงาน</strong><small>ไม่มีรายการแจ้งเตือนในข้อมูลที่ API ส่งกลับมา ทั้งนี้ไม่ได้หมายความว่าจะไม่มีความเสี่ยงในพื้นที่</small></div></div>';
+  }else{
+    alerts.forEach(a=>{
+      const el=document.createElement("div");el.className="alert";
+      const title=document.createElement("strong");title.textContent=a.event||"ประกาศเตือนสภาพอากาศ";
+      const detail=document.createElement("small");detail.textContent=(a.sender_name?a.sender_name+" · ":"")+(a.description||"ไม่มีรายละเอียด");
+      const body=document.createElement("div");body.append(title,detail);
+      const ico=document.createElement("div");ico.className="alert-ico";ico.textContent="⚠️";
+      el.append(ico,body);$("alerts").append(el);
+    });
+  }
+}
+async function searchPlace(query){
+  $("searchButton").disabled=true;$("searchButton").textContent="กำลังค้นหา...";
+  $("connectionStatus").textContent="กำลังเชื่อมต่อ";
+  setMessage("กำลังค้นหาพื้นที่และดึงข้อมูลจาก OpenWeather...");
+  try{
+    const found=await api("/api/search?q="+encodeURIComponent(query));
+    if(!found.results?.length) throw new Error("ไม่พบพื้นที่นี้ ลองใช้ชื่อภาษาอังกฤษหรือเพิ่มชื่อประเทศ");
+    if(found.results.length>1){
+      const choice=found.results[0];
+      setMessage(`พบ ${found.results.length} ผลลัพธ์ แสดงรายการแรก: ${[choice.name,choice.state,choice.country].filter(Boolean).join(", ")} (หากไม่ใช่พื้นที่ที่ต้องการ ให้เพิ่มชื่อประเทศ)`);
+    }
+    const p=found.results[0];
+    const weather=await api(`/api/weather?lat=${encodeURIComponent(p.lat)}&lon=${encodeURIComponent(p.lon)}`);
+    renderWeather(weather.current);
+    renderAir(weather.air);
+    renderOneCall(weather.onecall, weather.onecall_error);
+    $("connectionStatus").textContent="เชื่อมต่อ API แล้ว";
+    setMessage("โหลดข้อมูลสำเร็จ · "+[p.name,p.state,p.country].filter(Boolean).join(", "));
+  }catch(e){
+    $("connectionStatus").textContent="เชื่อมต่อไม่สำเร็จ";
+    setMessage(e.message,true);
+  }finally{$("searchButton").disabled=false;$("searchButton").textContent="ค้นหาพื้นที่";}
+}
+$("searchForm").addEventListener("submit",e=>{e.preventDefault();const q=$("searchInput").value.trim();if(q)searchPlace(q);});
+$("searchInput").value="Trang, Thailand";
+</script>
+</body>
+</html>
